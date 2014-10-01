@@ -2,6 +2,12 @@ import random
 import cPickle
 import sys
 
+class World:
+    def __init__(self, bottomLeft, start, end):
+        self.bottomLeft = bottomLeft
+        self.start = start
+        self.end = end
+
 class Node:
     left = None
     right = None
@@ -60,23 +66,50 @@ def generateMap():
         currentNodePrevRow = newBottomLeft
         currentNodeNewRow.down = currentNodePrevRow
         newBottomLeft = newBottomLeft.up
-    return bottomLeft
+
+    randX = random.randint(0, 100)
+    randY = random.randint(0, 100)
+
+    nodestart = bottomLeft
+
+    for i in range(randX):
+        nodestart = nodestart.right
+
+    for i in range(randY):
+        nodestart = nodestart.up
+
+    nodestart.value = 'S'
+
+    randX = random.randint(0, 100)
+    randY = random.randint(0, 100)
+
+    nodeend = bottomLeft
+
+    for i in range(randX):
+        nodeend = nodeend.right
+
+    for i in range(randY):
+        nodeend = nodeend.up
+
+
+    nodeend.value = 'E'
+
+    return World(bottomLeft, nodestart, nodeend)
 
 sys.setrecursionlimit(100000)
 
 for i in range(50):
     a = generateMap()
 
-    output = open('../worlds/data%d.pkl' % i, 'wb')
+    output = open('../worlds/world%d.pkl' % i, 'wb')
 
     cPickle.dump(a, output)
 
     output.close()
 
 
-
 import ipdb; ipdb.set_trace()
-bottomLeft = a
+bottomLeft = a.bottomLeft
 while bottomLeft != None:
     a = bottomLeft
     while a != None:

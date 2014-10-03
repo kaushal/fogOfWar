@@ -7,3 +7,6 @@ This is an implementation of a\* and variants of it using “fog of war” with 
 
 ##Repeat forward A\* search
 ![alt tag](https://raw.githubusercontent.com/kaushal/fogOfWar/master/images/repeatforwardastar.png)
+
+##Repeat reverse A\* search
+![alt tag](https://raw.githubusercontent.com/kaushal/fogOfWar/master/images/repeatreverseastar.png)

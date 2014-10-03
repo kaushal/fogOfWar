@@ -1,4 +1,4 @@
-from generate import World, Node
+from helpers import World, Node
 import cPickle as pickle
 import heapq
 import os
@@ -99,10 +99,20 @@ def getPath(tree, end):
         temp = tree[temp]
     return [item for item in reversed(path)]
 
+def discoverNeighboarBlocks(node):
+    if node.up and node.up.value == 'B':
+        node.up.knownBlocked = True
+    if node.down and node.down.value == 'B':
+        node.down.knownBlocked = True
+    if node.left and node.left.value == 'B':
+        node.left.knownBlocked = True
+    if node.right and node.right.value == 'B':
+        node.right.knownBlocked = True
 
 def walkPath(path):
     count = 0
     for step in path:
+        #discoverNeighboarBlocks(step)
         if step.value == 'B':
             step.knownBlocked = True
             return count
@@ -111,8 +121,30 @@ def walkPath(path):
         count += 1
     return count
 
+def repeatedReverseAStar(origin, destination, bottomLeft):
+    tempNode = destination
+    finalPath = []
+    path = computePath(tempNode, destination, bottomLeft)
+    pathArr = getPath(path, destination)
+    pathArr = [node for node in reversed(pathArr)]
 
-def repeatedAStar(origin, destination, bottomLeft):
+    while tempNode != origin:
+        #os.system('clear')
+        #printGraph(bottomLeft)
+        path = computePath(tempNode, origin, bottomLeft)
+        pathArr = getPath(path, destination)
+
+        index = walkPath(pathArr)
+        finalPath += pathArr[:index]
+        if index == len(pathArr) - 1:
+            return finalPath
+        # Temp node becomes the place where we stopped along the walkPath method
+        tempNode = finalPath[len(finalPath) - 1]
+    return finalPath
+
+
+
+def repeatedForwardAStar(origin, destination, bottomLeft):
     tempNode = origin
     finalPath = []
     while tempNode != destination:
@@ -126,7 +158,11 @@ def repeatedAStar(origin, destination, bottomLeft):
         if index == len(pathArr) - 1:
             return finalPath
         # Temp node becomes the place where we stopped along the walkPath method
-        tempNode = finalPath[len(finalPath) - 1]
+        if len(finalPath) >= 1:
+            tempNode = finalPath[len(finalPath) - 1]
+        os.system('clear')
+        printGraph(bottomLeft)
+
     return finalPath
 
 
@@ -166,14 +202,14 @@ def aStarSearch(origin, destination, bottomLeft):
 def main(worldNumber):
     world = pickle.load(open('./worlds/world%d.pkl' % worldNumber, 'rb'))
 
-    path = repeatedAStar(world.start, world.end, world.bottomLeft)
+    path = repeatedForwardAStar(world.start, world.end, world.bottomLeft)
     os.system('clear')
     printGraph(world.bottomLeft)
     print 'hello world'
 
 if __name__ == '__main__':
     for i in range(50):
-        if i == 7 or i == 17 or i == 31 or i == 16 or i == 34:
+        if i == 37:
             continue
         main(i)
 

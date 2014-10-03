@@ -1,4 +1,4 @@
-import generate
+from generate import World, Node
 import cPickle as pickle
 import heapq
 import os
@@ -42,6 +42,95 @@ def getNeighbors(node):
         array.append(node.down)
     return array
 
+
+def dumbGetNeighbors(node):
+    array = []
+    if node.left and not node.left.knownBlocked:
+        array.append(node.left)
+    if node.right and not node.right.knownBlocked:
+        array.append(node.right)
+    if node.up and not node.up.knownBlocked:
+        array.append(node.up)
+    if node.down and not node.down.knownBlocked:
+        array.append(node.down)
+    return array
+
+
+def computePath(origin, destination, bottomLeft):
+    closedSet = []
+    queue = []
+    heapq.heapify(queue)
+    cameFrom = {}
+    gscore = {}
+    fscore = {}
+    gscore[origin] = 0
+    fscore[origin] = gscore[origin] + getHeuristic(origin, destination)
+    heapq.heappush(queue, (fscore[origin], origin))
+
+    while(len(queue) > 0):
+        current = heapq.heappop(queue)[1]
+        if current == destination:
+            return cameFrom
+
+        closedSet.append(current)
+        for neighbor in dumbGetNeighbors(current):
+            if neighbor in closedSet:
+                continue
+            tempGScore = gscore[current] + 1
+
+            if not inQueue(neighbor, queue) or tempGScore < gscore[neighbor]:
+                #print current.x, current.y
+                #import ipdb; ipdb.set_trace()
+
+                #printGraph(bottomLeft)
+                #os.system('clear')
+                cameFrom[neighbor] = current
+                gscore[neighbor] = tempGScore
+                fscore[neighbor] = getHeuristic(neighbor, destination)
+                if neighbor not in queue:
+                    heapq.heappush(queue, (fscore[neighbor], neighbor))
+
+
+def getPath(tree, end):
+    path = []
+    temp = end
+    while temp in tree.keys():
+        path.append(temp)
+        temp = tree[temp]
+    return [item for item in reversed(path)]
+
+
+def walkPath(path):
+    count = 0
+    for step in path:
+        if step.value == 'B':
+            step.knownBlocked = True
+            return count
+        else:
+            step.value = 'V'
+        count += 1
+    return count
+
+
+def repeatedAStar(origin, destination, bottomLeft):
+    tempNode = origin
+    finalPath = []
+    while tempNode != destination:
+        #os.system('clear')
+        #printGraph(bottomLeft)
+        path = computePath(tempNode, destination, bottomLeft)
+        pathArr = getPath(path, destination)
+
+        index = walkPath(pathArr)
+        finalPath += pathArr[:index]
+        if index == len(pathArr) - 1:
+            return finalPath
+        # Temp node becomes the place where we stopped along the walkPath method
+        tempNode = finalPath[len(finalPath) - 1]
+    return finalPath
+
+
+
 def aStarSearch(origin, destination, bottomLeft):
     closedSet = []
     queue = []
@@ -56,7 +145,6 @@ def aStarSearch(origin, destination, bottomLeft):
     while(len(queue) > 0):
         current = heapq.heappop(queue)[1]
         if current == destination:
-            printGraph(bottomLeft)
             return cameFrom
 
         closedSet.append(current)
@@ -68,8 +156,6 @@ def aStarSearch(origin, destination, bottomLeft):
             if not inQueue(neighbor, queue) or tempGScore < gscore[neighbor]:
                 #print current.x, current.y
                 #import ipdb; ipdb.set_trace()
-                #os.system('clear')
-                #printGraph(bottomLeft)
                 current.value = 'V'
                 cameFrom[neighbor] = current
                 gscore[neighbor] = tempGScore
@@ -80,11 +166,14 @@ def aStarSearch(origin, destination, bottomLeft):
 def main(worldNumber):
     world = pickle.load(open('./worlds/world%d.pkl' % worldNumber, 'rb'))
 
-    aStarSearch(world.start, world.end, world.bottomLeft)
+    path = repeatedAStar(world.start, world.end, world.bottomLeft)
+    os.system('clear')
+    printGraph(world.bottomLeft)
     print 'hello world'
 
 if __name__ == '__main__':
     for i in range(50):
-        if i == 10:
+        if i == 7 or i == 17 or i == 31 or i == 16 or i == 34:
             continue
         main(i)
+

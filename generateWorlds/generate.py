@@ -14,6 +14,7 @@ class Node:
     up = None
     down = None
     value = '-'
+    knownBlocked = False
 
     def __init__(self, x, y):
         self.x = x

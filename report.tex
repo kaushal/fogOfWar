@@ -1,0 +1,35 @@
+\documentclass{article}
+
+\begin{document}
+
+\centerline{\sc \large CS 440 - HW 1}
+\vspace{.5pc}
+\centerline{\sc Kaushal Parikh , Alexio mota}
+\vspace{2pc}
+
+1.
+
+\setlength\parindent{3pc}  A. The first move of the agent for the example search problem from Figure 8 is to the east rather than the north given that the agent does not know initially which cells are blocked because that is the least cost path to the destination. The agent is only aware of it's location, the final destination, and visited nodes. At the coordinate of E2, the agent isn't aware of the blocked cell to its east. 
+
+\setlength\parindent{3pc}  B.  In the inital state, the agent only knows of its location, the location of its destination, and the surrounding cells. The max number of unique cells the agent can cover is equal to the number of unblocked cells. If the agent has visited all unblocked cells accessible to it and hasn't reached the destination, then there isn't a path to the destination. If the agent has visited all cells in the gridworld, then it must have reached its destination.
+\vspace{2pc}
+\\
+2. \setlength\parindent{3pc} The implementation of smaller \& larger g-values resulted in widely different runtimes. The large g-values correspond to worse paths and the respective implementation took an order of minutes to run. However, he smaller g-value version was on the order of milliseconds.
+\vspace{2pc}
+\\
+3. \setlength\parindent{3pc}  The Repeated Forward A* and Repeated Backward A* produced very similar results.
+\vspace{2pc}
+\\
+4. \setlength\parindent{3pc} The manhattan distance is consistent when you're constrained to moving vertically/horizontally along a grid. A heuristic is consistent if the "triangle inquality" holds. Since the Manhattan distance is the shortest path on a grid, taking a detour will always increase the distance.
+\vspace{2pc}
+\\
+5. \setlength\parindent{3pc}  Repeated Forward A* and Adaptive A* produced similar runtimes. In the adaptive implemetation, a constant heauristic was added to the entire grid which was simiar to adding 0 to entire grid. Hvalues were increased uniformally, every node had the same hvalue which resulted in the previously mentioned conclusion.
+\vspace{2pc}
+\\
+6. \setlength\parindent{3pc} The amount of memory needed to operate on gridworlds of size 1001 x 1001 would be about 100kb. The map is stored in memory and the values only handle the values stored internally. Largest gridworld that would be operable with a memory limit of 4 MBytes would be TODO-HERE=
+\vspace{2pc}
+\\
+
+\setlength\parindent{3pc}
+
+\end{document}
